@@ -1,0 +1,786 @@
+const ADMIN_HASH = "cfc53760f72786e2f46340de5a0a137b72b9caf372885728e53bf8484e353098";
+const WIZARD_HASH = "0e96f374679b32b2f4f26f4ac2dcdce641ebcee3f402048b2bfcc1a325a22d0a";
+const DB_KEY = "btwc_one_file_users_v4";
+const SESSION_KEY = "btwc_one_file_session_v4";
+
+let users = loadUsers();
+let activeUser = null;
+let adminUnlocked = false;
+let seconds = 30, running = false, timer = null, currentSignal = null, autoMode = false;
+
+const $ = id => document.getElementById(id);
+const views = ["loginView","registerView","wizardView","predictionView","settingsView"];
+
+function showView(id){
+  views.forEach(v => $(v).classList.toggle("hidden", v !== id));
+  window.scrollTo(0,0);
+}
+
+function loadUsers(){
+  try{
+    return JSON.parse(localStorage.getItem(DB_KEY) || "[]");
+  }catch(e){
+    return [];
+  }
+}
+
+function saveUsers(){
+  localStorage.setItem(DB_KEY, JSON.stringify(users));
+}
+
+async function hashText(text){
+  const data = new TextEncoder().encode(text);
+  const digest = await crypto.subtle.digest("SHA-256", data);
+  return [...new Uint8Array(digest)]
+    .map(b => b.toString(16).padStart(2,"0"))
+    .join("");
+}
+
+function now(){
+  return new Date().toLocaleString([],{
+    year:"numeric",
+    month:"2-digit",
+    day:"2-digit",
+    hour:"2-digit",
+    minute:"2-digit",
+    second:"2-digit"
+  });
+}
+
+function esc(s){
+  return String(s).replace(/[&<>"']/g,m=>({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  }[m]));
+}
+
+function updateClock(){
+  $("clock").textContent = new Date().toLocaleTimeString([],{
+    hour:"2-digit",
+    minute:"2-digit",
+    second:"2-digit",
+    hour12:false
+  });
+}
+
+setInterval(updateClock,1000);
+updateClock();
+
+$("registerBtn").onclick=()=>{
+  $("regMsg").textContent="";
+  showView("registerView");
+};
+
+$("backLoginBtn").onclick=()=>{
+  $("loginMsg").textContent="";
+  showView("loginView");
+};
+
+$("createAccountBtn").onclick=async()=>{
+  const username=$("regUser").value.trim();
+  const p1=$("regPass").value;
+  const p2=$("regPass2").value;
+
+  if(username.length<3)
+    return $("regMsg").textContent="Username must be at least 3 characters.";
+
+  if(!/^[A-Za-z0-9_.-]+$/.test(username))
+    return $("regMsg").textContent="Use letters, numbers, dot, dash or underscore.";
+
+  if(p1.length<4)
+    return $("regMsg").textContent="Password must be at least 4 characters.";
+
+  if(p1!==p2)
+    return $("regMsg").textContent="Passwords do not match.";
+
+  if(users.some(u=>u.username.toLowerCase()===username.toLowerCase()))
+    return $("regMsg").textContent="Username already exists.";
+
+  users.push({
+    id:crypto.randomUUID ? crypto.randomUUID() : String(Date.now()+Math.random()),
+    username,
+    passHash:await hashText(p1),
+    createdAt:now(),
+    lastLogin:"Never",
+    loginCount:0,
+    paid:false,
+    banned:false
+  });
+
+  saveUsers();
+
+  $("regUser").value="";
+  $("regPass").value="";
+  $("regPass2").value="";
+
+  $("regMsg").style.color="#52ffb0";
+  $("regMsg").textContent="Account created. Wait for administrator approval.";
+};
+
+$("loginBtn").onclick=login;
+
+$("loginPass").addEventListener("keydown",e=>{
+  if(e.key==="Enter") login();
+});
+
+async function login(){
+  const username=$("loginUser").value.trim();
+  const pass=$("loginPass").value;
+
+  const u=users.find(
+    x=>x.username.toLowerCase()===username.toLowerCase()
+  );
+
+  if(!u){
+    $("loginMsg").textContent=
+      "USER NOT FOUND • CREATE AN ACCOUNT FIRST";
+    return;
+  }
+
+  if(u.banned){
+    $("loginMsg").textContent=
+      "ACCESS BLOCKED • THIS ACCOUNT IS BANNED";
+    return;
+  }
+
+  if(!u.paid){
+    $("loginMsg").textContent=
+      "ACCESS DENIED • ACCOUNT IS UNPAID / PENDING";
+    return;
+  }
+
+  const h=await hashText(pass);
+
+  if(h!==u.passHash){
+    $("loginMsg").textContent=
+      "INVALID USERNAME OR PASSWORD";
+    return;
+  }
+
+  u.lastLogin=now();
+  u.loginCount=(u.loginCount||0)+1;
+
+  saveUsers();
+
+  activeUser=u;
+
+  sessionStorage.setItem(
+    SESSION_KEY,
+    u.id
+  );
+
+  $("loginPass").value="";
+  $("activeUser").textContent=u.username;
+  $("paidBadge").textContent="PAID";
+  $("wizardPass").value="";
+
+  showView("wizardView");
+}
+
+$("wizardBtn").onclick=unlockWizard;
+
+$("wizardPass").addEventListener("keydown",e=>{
+  if(e.key==="Enter") unlockWizard();
+});
+
+async function unlockWizard(){
+  const h=await hashText(
+    $("wizardPass").value
+  );
+
+  if(h!==WIZARD_HASH){
+    $("wizardMsg").textContent=
+      "WIZARD ACCESS DENIED";
+    return;
+  }
+
+  $("wizardPass").value="";
+  $("wizardMsg").textContent="";
+
+  showView("predictionView");
+}
+
+$("wizardLogout").onclick=logout;
+$("logoutBtn").onclick=logout;
+
+function logout(){
+  stopBot();
+
+  activeUser=null;
+
+  sessionStorage.removeItem(
+    SESSION_KEY
+  );
+
+  showView("loginView");
+}
+
+$("settingsBtn").onclick=()=>{
+  openSettings();
+};
+
+$("loginAdminBtn").onclick=()=>{
+  openSettings();
+};
+
+function openSettings(){
+  adminUnlocked=false;
+
+  $("adminPass").value="";
+  $("adminMsg").textContent="";
+
+  $("adminGate").classList.remove("hidden");
+  $("adminPanel").classList.add("hidden");
+
+  showView("settingsView");
+}
+
+$("closeSettingsBtn").onclick=()=>{
+  if(activeUser)
+    showView("predictionView");
+  else
+    showView("loginView");
+};
+
+$("adminUnlockBtn").onclick=async()=>{
+  const h=await hashText(
+    $("adminPass").value
+  );
+
+  if(h!==ADMIN_HASH){
+    $("adminMsg").textContent=
+      "ADMIN ACCESS DENIED";
+    return;
+  }
+
+  adminUnlocked=true;
+
+  $("adminPass").value="";
+  $("adminMsg").textContent="";
+
+  $("adminGate").classList.add("hidden");
+  $("adminPanel").classList.remove("hidden");
+
+  renderUsers();
+};
+
+$("adminPass").addEventListener("keydown",e=>{
+  if(e.key==="Enter")
+    $("adminUnlockBtn").click();
+});
+
+$("adminLockBtn").onclick=()=>{
+  openSettings();
+};
+
+$("refreshUsersBtn").onclick=renderUsers;
+
+function renderUsers(){
+  users=loadUsers();
+
+  $("totalUsers").textContent=users.length;
+
+  $("paidUsers").textContent=
+    users.filter(u=>u.paid&&!u.banned).length;
+
+  $("unpaidUsers").textContent=
+    users.filter(u=>!u.paid&&!u.banned).length;
+
+  $("bannedUsers").textContent=
+    users.filter(u=>u.banned).length;
+
+  const box=$("usersList");
+
+  if(!users.length){
+    box.innerHTML=
+      '<div class="securityNote">No users registered yet.</div>';
+    return;
+  }
+
+  box.innerHTML=users.map(u=>{
+
+    const state=
+      u.banned
+      ? '<span class="statusPill banned">BANNED</span>'
+      : u.paid
+      ? '<span class="statusPill paid">PAID</span>'
+      : '<span class="statusPill unpaid">UNPAID</span>';
+
+    const payLabel=
+      u.paid ? "MAKE UNPAID" : "MARK PAID";
+
+    const banLabel=
+      u.banned ? "UNBAN" : "BAN";
+
+    return `
+      <div class="userCard">
+
+        <div class="userHead">
+          <div class="userName">
+            ${esc(u.username)}
+          </div>
+
+          ${state}
+        </div>
+
+        <div class="userMeta">
+          Registered: ${esc(u.createdAt)}<br>
+          Last login: ${esc(u.lastLogin)}<br>
+          Login count: ${Number(u.loginCount||0)}<br>
+          Access:
+          ${
+            u.paid&&!u.banned
+            ? "ACTIVE PAID"
+            : u.banned
+            ? "BLOCKED"
+            : "PENDING PAYMENT"
+          }
+        </div>
+
+        <div class="userActions">
+
+          <button onclick="togglePaid('${u.id}')">
+            ${payLabel}
+          </button>
+
+          <button
+            class="${u.banned?'':'danger'}"
+            onclick="toggleBan('${u.id}')">
+            ${banLabel}
+          </button>
+
+          <button
+            class="danger"
+            onclick="deleteUser('${u.id}')">
+            DELETE USER
+          </button>
+
+        </div>
+
+      </div>
+    `;
+
+  }).join("");
+}
+
+window.togglePaid=function(id){
+
+  const u=users.find(x=>x.id===id);
+
+  if(!u) return;
+
+  u.paid=!u.paid;
+
+  if(u.paid)
+    u.banned=false;
+
+  saveUsers();
+  renderUsers();
+};
+
+window.toggleBan=function(id){
+
+  const u=users.find(x=>x.id===id);
+
+  if(!u) return;
+
+  u.banned=!u.banned;
+
+  saveUsers();
+  renderUsers();
+};
+
+window.deleteUser=function(id){
+
+  const u=users.find(x=>x.id===id);
+
+  if(!u) return;
+
+  if(!confirm(
+    "Delete user "+u.username+"?"
+  )) return;
+
+  users=users.filter(x=>x.id!==id);
+
+  saveUsers();
+  renderUsers();
+};
+
+$("banUnpaidBtn").onclick=()=>{
+
+  if(!confirm(
+    "Ban every currently unpaid user?"
+  )) return;
+
+  users.forEach(u=>{
+    if(!u.paid)
+      u.banned=true;
+  });
+
+  saveUsers();
+  renderUsers();
+};
+
+const mult=$("mult");
+const confidence=$("confidence");
+const status=$("status");
+const count=$("count");
+
+const start=$("start");
+const history=$("history");
+const autoToggle=$("autoToggle");
+const autoBtn=$("autoBtn");
+
+const intervalSelect=$("intervalSelect");
+const calcBtn=$("calcBtn");
+const formula=$("formula");
+
+function randomTarget(){
+
+  const r=Math.random();
+
+  let x=
+    r<.52
+    ? 1.05+Math.random()*.72
+    : r<.84
+    ? 1.78+Math.random()*1.02
+    : 2.80+Math.random()*1.18;
+
+  return Math.min(3.99,x);
+}
+
+function getRounds(){
+
+  return [
+    ...document.querySelectorAll(".roundInput")
+  ]
+  .map(x=>
+    parseFloat(
+      x.value.replace(",",".")
+    )
+  )
+  .filter(
+    x=>Number.isFinite(x)&&x>=1&&x<100
+  )
+  .slice(0,5);
+}
+
+function engineScore(){
+
+  const r=getRounds();
+
+  if(!r.length){
+
+    return {
+      score:Math.floor(
+        70+Math.random()*29
+      ),
+      target:randomTarget(),
+      detail:"Local random simulation baseline."
+    };
+  }
+
+  const weights=[5,4,3,2,1];
+
+  let weighted=0;
+  let ws=0;
+
+  r.forEach((v,i)=>{
+    weighted+=v*weights[i];
+    ws+=weights[i];
+  });
+
+  const mean=weighted/ws;
+
+  const simple=
+    r.reduce((a,b)=>a+b,0)/r.length;
+
+  const variance=
+    r.reduce(
+      (a,b)=>a+Math.pow(b-simple,2),
+      0
+    )/r.length;
+
+  const volatility=
+    Math.sqrt(variance);
+
+  let score=
+    78
+    +Math.min(
+      12,
+      Math.max(
+        -10,
+        (mean-1.8)*7
+      )
+    )
+    -Math.min(
+      16,
+      volatility*4.2
+    );
+
+  score=Math.round(
+    Math.max(
+      55,
+      Math.min(96,score)
+    )
+  );
+
+  let target=
+    1.15
+    +(score-55)/41
+    +Math.random()*1.05;
+
+  target=
+    Math.min(
+      3.99,
+      Math.max(1.05,target)
+    );
+
+  return {
+    score,
+    target,
+    detail:
+      `Weighted mean ${mean.toFixed(2)}X • volatility ${volatility.toFixed(2)}`
+  };
+}
+
+function tick(){
+
+  count.innerHTML=
+    seconds+
+    '<small>SECONDS TO NEXT SIGNAL</small>';
+}
+
+function addHistory(x){
+
+  const e=document.createElement("div");
+
+  e.className="item";
+  e.textContent=x.toFixed(2)+"X";
+
+  history.prepend(e);
+
+  while(history.children.length>12)
+    history.lastChild.remove();
+}
+
+function clearCurrentSignal(){
+
+  currentSignal=null;
+
+  mult.textContent="--.--X";
+
+  confidence.textContent=
+    "SYSTEM STANDBY";
+}
+
+function signal(){
+
+  if(!running&&!autoMode)
+    return;
+
+  const result=engineScore();
+
+  currentSignal=result.target;
+
+  mult.textContent=
+    result.target.toFixed(2)+"X";
+
+  confidence.textContent=
+    "BTWC SIMULATION SCORE • "+
+    result.score+"%";
+
+  status.textContent=
+    "Signal generated at "+
+    new Date().toLocaleTimeString()+
+    " • "+
+    result.detail;
+
+  addHistory(result.target);
+
+  seconds=
+    parseInt(
+      intervalSelect.value,
+      10
+    );
+
+  tick();
+}
+
+function begin(){
+
+  if(running)
+    return;
+
+  running=true;
+
+  start.textContent=
+    "BOT RUNNING • STOP";
+
+  status.textContent=
+    "Bot running. Signal engine active.";
+
+  seconds=
+    parseInt(
+      intervalSelect.value,
+      10
+    );
+
+  signal();
+
+  clearInterval(timer);
+
+  timer=setInterval(()=>{
+    seconds--;
+    tick();
+
+    if(seconds<=0)
+      signal();
+
+  },1000);
+}
+
+function stopBot(){
+
+  running=false;
+
+  clearInterval(timer);
+
+  timer=null;
+
+  start.textContent=
+    "START BOT";
+
+  clearCurrentSignal();
+
+  status.textContent=
+    "Bot stopped. Current signal removed.";
+
+  seconds=
+    parseInt(
+      intervalSelect.value,
+      10
+    );
+
+  tick();
+}
+
+function setAuto(on){
+
+  autoMode=on;
+
+  autoToggle.checked=on;
+
+  autoBtn.textContent=
+    "AUTO SIGNAL: "+
+    (on?"ON":"OFF");
+
+  if(on){
+
+    if(!running)
+      begin();
+
+    status.textContent=
+      "Auto signal enabled.";
+
+  }else{
+
+    if(running)
+      stopBot();
+    else
+      clearCurrentSignal();
+  }
+}
+
+start.onclick=()=>{
+  running
+    ? stopBot()
+    : begin();
+};
+
+autoBtn.onclick=()=>{
+  setAuto(!autoMode);
+};
+
+autoToggle.onchange=()=>{
+  setAuto(autoToggle.checked);
+};
+
+intervalSelect.onchange=()=>{
+
+  seconds=
+    parseInt(
+      intervalSelect.value,
+      10
+    );
+
+  tick();
+};
+
+calcBtn.onclick=()=>{
+
+  const r=getRounds();
+
+  if(!r.length){
+
+    formula.textContent=
+      "Enter at least one previous round.";
+
+    return;
+  }
+
+  const result=engineScore();
+
+  formula.textContent=
+    `Simulation score: ${result.score}% • `+
+    `weighted recent-round method • `+
+    `volatility guard • ${r.length}/5 rounds used.`;
+};
+
+tick();
+
+(function restoreSession(){
+
+  const id=
+    sessionStorage.getItem(
+      SESSION_KEY
+    );
+
+  const u=
+    users.find(x=>x.id===id);
+
+  if(u && u.paid && !u.banned){
+
+    activeUser=u;
+
+    $("activeUser").textContent=
+      u.username;
+
+    showView("wizardView");
+
+  }else{
+
+    sessionStorage.removeItem(
+      SESSION_KEY
+    );
+
+    showView("loginView");
+  }
+
+})();
+
+
+
+
+
+
+
+
+
+
+
+
+

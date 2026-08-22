@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>PROJECT HELL MARRY BOT • BTWC</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+
+<body>
+<div class="app">
+  <div class="blueBackdrop"></div>
+  <div class="blueOverlay"></div>
+  <div class="grid"></div>
+  <div class="scan"></div>
+
+  <!-- LOGIN -->
+  <section id="loginView" class="view">
+    <div class="authCard">
+      <div class="authLogo"><img src="assets/asset_1.png') !important;
+  background-size:cover !important;
+  background-position:center center !important;
+  background-attachment:fixed !important;
+  background-repeat:no-repeat !important;
+}
+.app {
+  background:
+    linear-gradient(rgba(0,0,18,.38),rgba(0,0,18,.55)),
+    transparent !important;
+  min-height:100vh;
+}
+.app::before {
+  content:" alt="BTWC"></div>
+      <div class="bt">BTWC</div>
+      <h1>USER LOGIN</h1>
+      <p class="muted">Login first. Approved paid users can continue to the wizard.</p>
+
+      <input id="loginUser" autocomplete="username" placeholder="USERNAME">
+      <input id="loginPass" type="password" autocomplete="current-password" placeholder="PASSWORD">
+
+      <button id="loginBtn">LOGIN</button>
+      <button id="registerBtn" class="ghost">CREATE NEW ACCOUNT</button>
+      <button id="loginAdminBtn" class="tinyAdmin">⚙ ADMIN SETTINGS</button>
+      <div id="loginMsg" class="msg"></div>
+    </div>
+  </section>
+
+  <!-- REGISTER -->
+  <section id="registerView" class="view hidden">
+    <div class="authCard">
+      <div class="bt">BTWC</div>
+      <h1>NEW USER</h1>
+      <p class="muted">New accounts are created as <b>UNPAID / PENDING</b> until approved by the administrator.</p>
+
+      <input id="regUser" autocomplete="username" placeholder="CHOOSE USERNAME">
+      <input id="regPass" type="password" autocomplete="new-password" placeholder="CREATE PASSWORD">
+      <input id="regPass2" type="password" autocomplete="new-password" placeholder="CONFIRM PASSWORD">
+
+      <button id="createAccountBtn">CREATE ACCOUNT</button>
+      <button id="backLoginBtn" class="ghost">BACK TO LOGIN</button>
+      <div id="regMsg" class="msg"></div>
+    </div>
+  </section>
+
+  <!-- WIZARD PASSWORD -->
+  <section id="wizardView" class="view hidden">
+    <div class="authCard">
+      <div class="lock">🔐</div>
+      <div class="bt">BTWC</div>
+      <h1>WIZARD ACCESS</h1>
+      <p class="muted">Account approved. Enter the private wizard password to open the prediction engine.</p>
+
+      <input id="wizardPass" type="password" autocomplete="off" placeholder="WIZARD PASSWORD">
+      <button id="wizardBtn">UNLOCK ENGINE</button>
+      <button id="wizardLogout" class="ghost">LOG OUT</button>
+      <div id="wizardMsg" class="msg"></div>
+    </div>
+  </section>
+
+  <!-- PREDICTION -->
+  <section id="predictionView" class="view hidden">
+    <header class="top">
+      <button id="settingsBtn" class="settingsBtn" title="Admin settings">⚙</button>
+      <div class="userBadge">USER: <b id="activeUser">—</b> <span id="paidBadge">PAID</span></div>
+      <img class="logo" src="assets/asset_1.png') !important;
+  background-size:cover !important;
+  background-position:center center !important;
+  background-attachment:fixed !important;
+  background-repeat:no-repeat !important;
+}
+.app {
+  background:
+    linear-gradient(rgba(0,0,18,.38),rgba(0,0,18,.55)),
+    transparent !important;
+  min-height:100vh;
+}
+.app::before {
+  content:" alt="BTWC Ballers Club logo">
+      <div class="bt">BTWC</div>
+      <h1 class="title">PROJECT HELL MARRY BOT</h1>
+      <div class="sub">AVIATOR ENGINE • WIZARD EDITION</div>
+      <div class="line"></div>
+      <div class="clock">LOCAL TIME <b id="clock">--:--:--</b></div>
+    </header>
+
+    <section class="panel">
+      <div class="label">NEXT SIMULATED TARGET • BELOW 4X</div>
+      <div class="mult" id="mult">--.--X</div>
+      <div class="conf" id="confidence">SYSTEM STANDBY</div>
+      <div class="status" id="status">Press START BOT to generate a simulated signal.</div>
+      <div class="count" id="count">30<small>SECONDS TO NEXT SIGNAL</small></div>
+      <button id="start">START BOT</button>
+      <button id="autoBtn" class="secondary">AUTO SIGNAL: OFF</button>
+    </section>
+
+    <section class="panel">
+      <h3>ENGINE OPTIONS</h3>
+      <label class="switchRow">
+        <span>Automatic signal generation</span>
+        <input id="autoToggle" type="checkbox">
+      </label>
+
+      <label class="fieldLabel">Countdown seconds</label>
+      <select id="intervalSelect">
+        <option value="15">15 seconds</option>
+        <option value="30" selected>30 seconds</option>
+        <option value="45">45 seconds</option>
+        <option value="60">60 seconds</option>
+      </select>
+
+      <label class="fieldLabel">Previous rounds (up to 5)</label>
+      <div class="roundGrid">
+        <input class="roundInput" inputmode="decimal" placeholder="R1">
+        <input class="roundInput" inputmode="decimal" placeholder="R2">
+        <input class="roundInput" inputmode="decimal" placeholder="R3">
+        <input class="roundInput" inputmode="decimal" placeholder="R4">
+        <input class="roundInput" inputmode="decimal" placeholder="R5">
+      </div>
+
+      <button id="calcBtn">CALCULATE ENGINE SCORE</button>
+      <div class="formula" id="formula">Weighted recent-round analysis + volatility guard.</div>
+    </section>
+
+    <div class="brands">
+      <div class="brand b1">1 • AFRICA BET</div>
+      <div class="brand b2">2 • WINBUCKS</div>
+      <div class="brand b3">3 • SPINCITY</div>
+      <div class="brand b4">4 • BEZBETS</div>
+    </div>
+
+    <h3>BTWC SIGNAL HISTORY</h3>
+    <div class="history" id="history"></div>
+
+    <button id="logoutBtn" class="logoutBtn">LOG OUT</button>
+
+    <div class="note">
+      SIMULATOR ONLY. Previous rounds can influence the displayed simulation score, but no formula can
+      reliably predict real Aviator crash points.
+    </div>
+  </section>
+
+  <!-- ADMIN SETTINGS -->
+  <section id="settingsView" class="view hidden">
+    <div class="settingsPage">
+      <div class="settingsHeader">
+        <button id="closeSettingsBtn" class="backBtn">← BACK</button>
+        <div>
+          <div class="bt smallBt">BTWC</div>
+          <h1>ADMIN SETTINGS</h1>
+          <div class="adminSub">USER ACCESS CONTROL</div>
+        </div>
+      </div>
+
+      <div id="adminGate" class="adminGate">
+        <div class="lock">🔒</div>
+        <h2>PRIVATE ADMIN AREA</h2>
+        <p class="muted">Enter the administrator password. It is never displayed on this page.</p>
+        <input id="adminPass" type="password" autocomplete="off" placeholder="ADMIN PASSWORD">
+        <button id="adminUnlockBtn">UNLOCK SETTINGS</button>
+        <div id="adminMsg" class="msg"></div>
+      </div>
+
+      <div id="adminPanel" class="hidden">
+        <div class="adminStats">
+          <div><b id="totalUsers">0</b><span>TOTAL</span></div>
+          <div><b id="paidUsers">0</b><span>PAID</span></div>
+          <div><b id="unpaidUsers">0</b><span>UNPAID</span></div>
+          <div><b id="bannedUsers">0</b><span>BANNED</span></div>
+        </div>
+
+        <div class="toolbar">
+          <button id="refreshUsersBtn">↻ REFRESH</button>
+          <button id="banUnpaidBtn" class="danger">BAN ALL UNPAID</button>
+        </div>
+
+        <div id="usersList" class="usersList"></div>
+
+        <div class="securityNote">
+          Passwords are stored as hashes in this offline app. This protects them from being shown in the
+          user list, but a single HTML file cannot provide true server-side security or prevent a technical
+          user from inspecting/modifying local browser storage.
+        </div>
+
+        <button id="adminLockBtn" class="ghost">LOCK SETTINGS</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+  <script src="app.js"></script>
+</body>
+</html>

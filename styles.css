@@ -1,0 +1,143 @@
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#000;color:#fff;font-family:Arial,Helvetica,sans-serif}
+body{display:flex;justify-content:center;padding:0 10px}
+.app{width:100%;max-width:470px;min-height:100vh;position:relative;overflow:hidden;background:radial-gradient(circle at 50% 18%,rgba(255,20,110,.20),transparent 24%),radial-gradient(circle at 50% 55%,rgba(125,0,255,.16),transparent 35%),linear-gradient(#010106,#060309 55%,#000);padding:16px 14px 28px}
+.grid{position:absolute;inset:0;pointer-events:none;opacity:.15;background-image:linear-gradient(rgba(255,30,120,.18) 1px,transparent 1px),linear-gradient(90deg,rgba(255,30,120,.18) 1px,transparent 1px);background-size:36px 36px;mask-image:linear-gradient(to bottom,transparent,#000 18%,#000 82%,transparent)}
+.scan{position:absolute;left:0;right:0;height:2px;background:#ff247f;box-shadow:0 0 18px #ff247f;opacity:.55;animation:scan 5s linear infinite}
+@keyframes scan{0%{top:12%}100%{top:92%}}
+.top{position:relative;z-index:2;text-align:center}
+.logo{width:min(92%,390px);height:auto;border-radius:16px;display:block;margin:2px auto 8px;box-shadow:0 0 20px rgba(255,30,120,.35),0 0 45px rgba(150,0,255,.2)}
+.bt{font-family:Impact,"Arial Black",sans-serif;letter-spacing:5px;font-size:30px;color:#fff;text-shadow:0 0 7px #ff2b8a,0 0 18px #ff006e;margin:8px 0 2px}
+.title{font-family:Impact,"Arial Black",sans-serif;letter-spacing:2px;font-size:22px;margin:0;color:#fff}
+.sub{color:#ff3d91;font-weight:900;letter-spacing:2px;font-size:12px;margin-top:7px}
+.line{height:3px;max-width:330px;margin:15px auto;background:linear-gradient(90deg,transparent,#ff247f,#9b39ff,#00ff79,transparent);box-shadow:0 0 12px #ff247f}
+.clock{border:1px solid #3b185d;background:rgba(8,5,15,.9);border-radius:13px;padding:9px;text-align:center;color:#888;font-size:10px;letter-spacing:2px}
+.clock b{display:block;color:#fff;font-size:21px;margin-top:3px;font-family:"Arial Black",Arial,sans-serif}
+.panel{margin-top:13px;border:1px solid #6c2165;border-radius:20px;background:rgba(8,7,14,.94);padding:14px;box-shadow:0 0 25px rgba(255,0,120,.12)}
+.label{text-align:center;color:#aaa;font-size:10px;letter-spacing:2px}
+.mult{font-family:Impact,"Arial Black",sans-serif;font-size:67px;text-align:center;color:#ffd92f;line-height:1.05;text-shadow:0 0 9px #ff8c00,0 0 25px rgba(255,60,0,.5);margin:8px 0}
+.conf{text-align:center;color:#00ff79;font-weight:900;font-size:12px}
+.status{margin-top:10px;padding:10px;border-radius:10px;background:#111019;text-align:center;color:#aaa;font-size:11px}
+.count{text-align:center;font-family:Impact,"Arial Black",sans-serif;font-size:43px;margin:12px 0 3px;color:#fff;text-shadow:0 0 15px #b22bff}
+.count small{display:block;font-family:Arial,sans-serif;font-size:9px;color:#777;letter-spacing:2px}
+button{width:100%;border:0;border-radius:14px;padding:16px;margin-top:11px;color:#fff;font-weight:900;font-size:15px;letter-spacing:1px;background:linear-gradient(90deg,#ff197c,#8b2cff,#00bd69);box-shadow:0 0 20px rgba(255,0,130,.25);cursor:pointer}
+button:active{transform:scale(.98)}
+.brands{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:13px}
+.brand{padding:11px 4px;border:1px solid #2c2039;background:#0c0b12;border-radius:10px;text-align:center;font-weight:900;font-size:11px}
+.b1{color:#ffbd28}.b2{color:#35ff98}.b3{color:#ff4aa0}.b4{color:#7ca4ff}
+h3{font-size:11px;color:#999;letter-spacing:1px;margin:17px 0 7px}
+.history{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.item{padding:9px 2px;background:#0e0d15;border:1px solid #292032;border-radius:8px;text-align:center;color:#ffd92f;font-weight:900;font-size:11px}
+.note{font-size:8.5px;line-height:1.45;color:#555;text-align:center;margin-top:16px}
+
+/* ===== separated from original file ===== */
+html,body {
+  background:#000 !important;
+}
+body {
+  background-image:url('assets/asset_1.png') !important;
+  background-size:cover !important;
+  background-position:center center !important;
+  background-attachment:fixed !important;
+  background-repeat:no-repeat !important;
+}
+.app {
+  background:
+    linear-gradient(rgba(0,0,18,.38),rgba(0,0,18,.55)),
+    transparent !important;
+  min-height:100vh;
+}
+.app::before {
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  background-image:url('assets/asset_1.png');
+  background-size:cover;
+  background-position:center;
+  filter:saturate(1.08) contrast(1.04);
+}
+
+/* ===== separated from original file ===== */
+:root{--blue:#087cff;--blue2:#003cff;--panel:rgba(2,10,28,.88);--line:#126eff}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#000;color:#fff;font-family:Arial,Helvetica,sans-serif}
+body{display:flex;justify-content:center;padding:0 10px}
+.app{width:100%;max-width:470px;min-height:100vh;position:relative;overflow:hidden;background:#010611;padding:14px 14px 30px}
+.blueBackdrop{position:fixed;inset:0;background-image:url("assets/asset_1.png");background-size:cover;background-position:center top;opacity:.55;z-index:0}
+.blueOverlay{position:fixed;inset:0;background:linear-gradient(180deg,rgba(0,4,15,.25),rgba(0,8,30,.83) 58%,#000 100%);z-index:1}
+.grid{position:fixed;inset:0;pointer-events:none;opacity:.11;background-image:linear-gradient(rgba(0,119,255,.24) 1px,transparent 1px),linear-gradient(90deg,rgba(0,119,255,.24) 1px,transparent 1px);background-size:36px 36px;z-index:2}
+.scan{position:fixed;left:0;right:0;height:2px;background:#1688ff;box-shadow:0 0 18px #1688ff;opacity:.55;animation:scan 5s linear infinite;z-index:3}
+@keyframes scan{0%{top:10%}100%{top:92%}}
+.view{position:relative;z-index:4;min-height:calc(100vh - 44px)}
+.hidden{display:none!important}
+.authCard{width:min(100%,390px);margin:8vh auto 0;padding:25px;border:1px solid #0c6dff;border-radius:22px;background:rgba(1,8,24,.93);box-shadow:0 0 35px rgba(0,100,255,.3);text-align:center}
+.authLogo img{width:100%;max-height:150px;object-fit:cover;border-radius:14px}
+.bt{font-family:Impact,"Arial Black",sans-serif;letter-spacing:5px;font-size:30px;color:#fff;text-shadow:0 0 8px #1688ff,0 0 20px #004cff;margin:8px 0 2px}
+.smallBt{font-size:22px;margin:0}
+.authCard h1{margin:6px 0 8px;font-size:20px;letter-spacing:2px}
+.muted{color:#a8b6cc;font-size:11px;line-height:1.5}
+input,select{width:100%;border:1px solid #164b8d;background:#020917;color:#fff;border-radius:11px;padding:13px;margin-top:9px;outline:none}
+input:focus,select:focus{border-color:#1788ff;box-shadow:0 0 0 2px rgba(0,120,255,.12)}
+button{width:100%;border:0;border-radius:11px;padding:13px;margin-top:10px;color:#fff;font-weight:900;letter-spacing:.7px;background:linear-gradient(90deg,#005cff,#1299ff);box-shadow:0 0 16px rgba(0,105,255,.18);cursor:pointer}
+button:active{transform:scale(.99)}
+.ghost{background:rgba(6,21,45,.9);border:1px solid #1857a4}
+.tinyAdmin{background:transparent;border:1px solid #0d3b73;color:#78b8ff;font-size:10px}
+.msg{min-height:18px;margin-top:9px;color:#ff638c;font-size:11px}
+.lock{font-size:42px}
+.top{position:relative;text-align:center}
+.logo{width:min(92%,390px);height:auto;border-radius:16px;display:block;margin:2px auto 8px;box-shadow:0 0 25px rgba(0,100,255,.38)}
+.title{font-family:Impact,"Arial Black",sans-serif;letter-spacing:2px;font-size:22px;margin:0;color:#fff}
+.sub{color:#45aaff;font-weight:900;letter-spacing:2px;font-size:12px;margin-top:7px}
+.line{height:3px;max-width:330px;margin:15px auto;background:linear-gradient(90deg,transparent,#0077ff,#51b7ff,#0070ff,transparent);box-shadow:0 0 12px #087cff}
+.clock{border:1px solid #124c8b;background:rgba(2,9,24,.9);border-radius:13px;padding:9px;text-align:center;color:#8da3c2;font-size:10px;letter-spacing:2px}
+.clock b{display:block;color:#fff;font-size:21px;margin-top:3px;font-family:"Arial Black",Arial,sans-serif}
+.userBadge{display:inline-flex;gap:8px;align-items:center;position:absolute;right:0;top:0;background:rgba(1,10,25,.92);border:1px solid #165da8;border-radius:999px;padding:6px 9px;font-size:8px;color:#91b5de;z-index:5}
+.userBadge b{color:#fff}
+#paidBadge{color:#4dffb0}
+.settingsBtn{position:absolute;right:0;top:37px;width:42px;height:42px;padding:0;margin:0;border-radius:50%;font-size:20px;background:rgba(0,53,120,.85);border:1px solid #1986ff;z-index:5}
+.panel{margin-top:13px;border:1px solid #12549c;border-radius:20px;background:rgba(2,9,24,.91);padding:14px;box-shadow:0 0 25px rgba(0,75,255,.13)}
+.label{text-align:center;color:#a8b6cc;font-size:10px;letter-spacing:2px}
+.mult{font-family:Impact,"Arial Black",sans-serif;font-size:67px;text-align:center;color:#54b8ff;line-height:1.05;text-shadow:0 0 9px #0077ff,0 0 25px rgba(0,120,255,.5);margin:8px 0}
+.conf{text-align:center;color:#50ffb0;font-weight:900;font-size:12px}
+.status{margin-top:10px;padding:10px;border-radius:10px;background:#050d1c;text-align:center;color:#a8b6cc;font-size:11px}
+.count{text-align:center;font-family:Impact,"Arial Black",sans-serif;font-size:43px;margin:12px 0 3px;color:#fff;text-shadow:0 0 15px #087cff}
+.count small{display:block;font-family:Arial,sans-serif;font-size:9px;color:#7891b2;letter-spacing:1px}
+.secondary{background:linear-gradient(90deg,#07316d,#174c9b)!important}
+h3{font-size:13px;letter-spacing:1.5px;color:#c7d9ef;margin:18px 0 8px}
+.switchRow{display:flex;align-items:center;justify-content:space-between;gap:10px;color:#c7d9ef;font-size:12px;margin:10px 0}
+.switchRow input{width:20px;height:20px;accent-color:#1688ff}
+.fieldLabel{display:block;color:#8fa9c8;font-size:10px;letter-spacing:1px;margin-top:14px}
+.roundGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.roundInput{font-size:11px;text-align:center;padding:11px 4px}
+.formula{margin-top:10px;padding:10px;border-radius:10px;background:#050d1c;color:#74ffbd;font-size:10px;line-height:1.4}
+.brands{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.brand{padding:10px;border-radius:12px;text-align:center;font-size:9px;font-weight:900;border:1px solid #174c8e;background:rgba(2,11,28,.88)}
+.history{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.item{padding:9px 4px;border-radius:9px;background:#06152a;border:1px solid #113e70;text-align:center;color:#67bdff;font-weight:900;font-size:11px}
+.note{margin-top:16px;color:#7f95b2;font-size:9px;line-height:1.5;text-align:center}
+.logoutBtn{background:#12253d;border:1px solid #315477}
+.settingsPage{background:linear-gradient(180deg,rgba(0,29,75,.96),rgba(1,8,22,.98));min-height:calc(100vh - 28px);margin:-14px;padding:18px 14px 30px}
+.settingsHeader{display:flex;align-items:center;gap:12px;padding:8px 0 18px;border-bottom:1px solid #126eff}
+.settingsHeader h1{font-size:18px;margin:0;letter-spacing:1.5px}
+.adminSub{font-size:9px;color:#70b8ff;letter-spacing:2px;margin-top:3px}
+.backBtn{width:auto;margin:0;padding:10px 13px;background:#062e67;border:1px solid #187fff}
+.adminGate{max-width:390px;margin:12vh auto 0;text-align:center;padding:25px;border:1px solid #0e70ff;border-radius:20px;background:rgba(0,10,30,.9);box-shadow:0 0 35px rgba(0,95,255,.2)}
+.adminStats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:15px}
+.adminStats div{padding:10px 3px;text-align:center;border:1px solid #164e91;border-radius:12px;background:#031027}
+.adminStats b{display:block;font-size:19px;color:#61baff}
+.adminStats span{font-size:7px;color:#7995b8;letter-spacing:1px}
+.toolbar{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.toolbar button{font-size:9px}
+.danger{background:linear-gradient(90deg,#6b0623,#bd153d)!important}
+.usersList{margin-top:10px}
+.userCard{border:1px solid #164e91;background:rgba(2,11,28,.92);border-radius:15px;padding:12px;margin-top:8px}
+.userHead{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.userName{font-weight:900;color:#fff;font-size:14px}
+.statusPill{font-size:8px;border-radius:999px;padding:5px 7px;font-weight:900}
+.paid{background:#064f36;color:#6dffbf} .unpaid{background:#493700;color:#ffd56d} .banned{background:#5b0820;color:#ff8aa8}
+.userMeta{font-size:9px;color:#8097b5;line-height:1.6;margin-top:7px}
+.userActions{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
+.userActions button{font-size:8px;padding:9px;margin-top:0}
+.securityNote{margin-top:12px;padding:11px;border:1px solid #123c6e;border-radius:11px;color:#7189a8;font-size:9px;line-height:1.5}
+@media(max-width:360px){.userBadge{position:relative;top:auto;right:auto;margin-bottom:8px}.settingsBtn{top:0}.roundGrid{gap:3px}}
